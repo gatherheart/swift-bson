@@ -95,6 +95,22 @@ extension BSONRegularExpression: BSONValue {
                         "\"pattern\" and \"options\" must be strings"
                 )
             }
+
+            guard patternStr.isValidCString else {
+                throw DecodingError._extendedJSONError(
+                    keyPath: keyPath,
+                    debugDescription: "Could not parse `BSONRegularExpression` from \"\(regex)\", " +
+                        "\"pattern\" must not contain null byte(s)"
+                )
+            }
+            guard optionsStr.isValidCString else {
+                throw DecodingError._extendedJSONError(
+                    keyPath: keyPath,
+                    debugDescription: "Could not parse `BSONRegularExpression` from \"\(regex)\", " +
+                        "\"options\" must not contain null byte(s)"
+                )
+            }
+
             self = BSONRegularExpression(pattern: patternStr, options: optionsStr)
             return
         } else {
@@ -109,6 +125,22 @@ extension BSONRegularExpression: BSONValue {
                 // "Regular expression as value of $regex query operator with $options" corpus test.
                 return nil
             }
+
+            guard patternStr.isValidCString else {
+                throw DecodingError._extendedJSONError(
+                    keyPath: keyPath,
+                    debugDescription: "Could not parse `BSONRegularExpression` pattern from \"\(patternStr)\", " +
+                        "must not contain null byte(s)"
+                )
+            }
+            guard optionsStr.isValidCString else {
+                throw DecodingError._extendedJSONError(
+                    keyPath: keyPath,
+                    debugDescription: "Could not parse `BSONRegularExpression` options from \"\(optionsStr)\", " +
+                        "must not contain null byte(s)"
+                )
+            }
+
             self = BSONRegularExpression(pattern: patternStr, options: optionsStr)
             return
         }

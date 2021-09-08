@@ -28,3 +28,9 @@ extension ByteBuffer {
         throw BSONError.InternalError(message: "Failed to read CString, possibly missing null terminator?")
     }
 }
+
+extension String {
+    internal var isValidCString: Bool {
+        !self.utf8.contains(0)
+    }
+}

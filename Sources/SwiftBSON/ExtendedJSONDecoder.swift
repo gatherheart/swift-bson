@@ -129,6 +129,12 @@ public class ExtendedJSONDecoder {
         try storage.buildDocument { storage in
             var bytes = 0
             for (k, v) in object {
+                guard k.isValidCString else {
+                    throw DecodingError._extendedJSONError(
+                        keyPath: keyPath,
+                        debugDescription: "Extended JSON keys cannot contain embedded null bytes - found \"\(k)\""
+                    )
+                }
                 bytes += try self.appendElement(v, to: &storage, forKey: k, keyPath: keyPath + [k])
             }
             return bytes
