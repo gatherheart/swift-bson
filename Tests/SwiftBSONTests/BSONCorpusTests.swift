@@ -1,3 +1,4 @@
+import ExtrasJSON
 import Foundation
 import Nimble
 @testable import SwiftBSON
@@ -245,6 +246,11 @@ final class BSONCorpusTests: BSONTestCase {
                         }
                         expect(try decoder.decode(BSONDocument.self, from: testData))
                             .to(throwError(errorType: DecodingError.self), description: description)
+                        // Drivers SHOULD also parse the Extended JSON input using a regular JSON parser (not an
+                        // Extended JSON one) and verify the input is parsed successfully. This serves to verify that
+                        // the ``parseErrors`` test cases are testing Extended JSON-specific error conditions and that
+                        // they do not have, for example, unintended syntax errors.
+                        expect(try JSONParser().parse(bytes: testData)).toNot(throwError())
                     case .decimal128:
                         expect(try BSONDecimal128(test.string))
                             .to(throwError(), description: description)
