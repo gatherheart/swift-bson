@@ -82,6 +82,9 @@ extension BSONRegularExpression: BSONValue {
      *   - `DecodingError` if `json` is a partial match or is malformed.
      */
     internal init?(fromExtJSON json: JSON, keyPath: [String]) throws {
+        let regexPattern: String
+        let regexOptions: String
+
         // canonical and relaxed extended JSON v2
         if let regex = try json.value.unwrapObject(withKey: "$regularExpression", keyPath: keyPath) {
             guard
@@ -95,24 +98,8 @@ extension BSONRegularExpression: BSONValue {
                         "\"pattern\" and \"options\" must be strings"
                 )
             }
-
-            guard patternStr.isValidCString else {
-                throw DecodingError._extendedJSONError(
-                    keyPath: keyPath,
-                    debugDescription: "Could not parse `BSONRegularExpression` from \"\(regex)\", " +
-                        "\"pattern\" must not contain null byte(s)"
-                )
-            }
-            guard optionsStr.isValidCString else {
-                throw DecodingError._extendedJSONError(
-                    keyPath: keyPath,
-                    debugDescription: "Could not parse `BSONRegularExpression` from \"\(regex)\", " +
-                        "\"options\" must not contain null byte(s)"
-                )
-            }
-
-            self = BSONRegularExpression(pattern: patternStr, options: optionsStr)
-            return
+            regexPattern = patternStr
+            regexOptions = optionsStr
         } else {
             // legacy / v1 extended JSON
             guard
@@ -126,24 +113,26 @@ extension BSONRegularExpression: BSONValue {
                 return nil
             }
 
-            guard patternStr.isValidCString else {
-                throw DecodingError._extendedJSONError(
-                    keyPath: keyPath,
-                    debugDescription: "Could not parse `BSONRegularExpression` pattern from \"\(patternStr)\", " +
-                        "must not contain null byte(s)"
-                )
-            }
-            guard optionsStr.isValidCString else {
-                throw DecodingError._extendedJSONError(
-                    keyPath: keyPath,
-                    debugDescription: "Could not parse `BSONRegularExpression` options from \"\(optionsStr)\", " +
-                        "must not contain null byte(s)"
-                )
-            }
-
-            self = BSONRegularExpression(pattern: patternStr, options: optionsStr)
-            return
+            regexPattern = patternStr
+            regexOptions = optionsStr
         }
+
+        guard regexPattern.isValidCString else {
+            throw DecodingError._extendedJSONError(
+                keyPath: keyPath,
+                debugDescription: "Could not parse `BSONRegularExpression` pattern from \"\(regexPattern)\", " +
+                    "must not contain null byte(s)"
+            )
+        }
+        guard regexOptions.isValidCString else {
+            throw DecodingError._extendedJSONError(
+                keyPath: keyPath,
+                debugDescription: "Could not parse `BSONRegularExpression` options from \"\(regexOptions)\", " +
+                    "must not contain null byte(s)"
+            )
+        }
+
+        self = BSONRegularExpression(pattern: regexPattern, options: regexOptions)
     }
 
     /// Converts this `BSONRegularExpression` to a corresponding `JSON` in relaxed extendedJSON format.
