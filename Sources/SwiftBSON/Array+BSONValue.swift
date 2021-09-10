@@ -40,7 +40,7 @@ extension Array: BSONValue where Element == BSON {
 
     internal static var bsonType: BSONType { .array }
 
-    internal var bson: BSON { .array(self) }
+    internal func toBSON() -> BSON { .array(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let doc = try BSONDocument.read(from: &buffer).documentValue else {

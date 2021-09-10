@@ -322,7 +322,12 @@ public class BSONDocumentIterator: IteratorProtocol {
                 // we ran out of values
                 break
             }
-            newDoc.append(key: next.key, value: next.value)
+            do {
+                try newDoc.append(key: next.key, value: next.value)
+            } catch {
+                // given we are constructing from a valid document, we shouldn't encounter any errors here.
+                fatalError("\(error)")
+            }
         }
 
         return newDoc
@@ -349,6 +354,15 @@ extension BSONDocument {
         for pair in self where try isIncluded(pair) {
             elements.append(pair)
         }
-        return BSONDocument(keyValuePairs: elements)
+        do {
+            return try BSONDocument(keyValuePairs: elements)
+        } catch {
+            // the only error cases that can result in the above initializer are
+            // 1) a document is too large, or
+            // 2) a key contains embedded null byte(s)
+            // since we are constructing this from a document we already know to be valid, we should not encounter
+            // either of those cases.
+            fatalError("\(error)")
+        }
     }
 }

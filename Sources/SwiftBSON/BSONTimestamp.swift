@@ -6,7 +6,7 @@ import NIO
 public struct BSONTimestamp: BSONValue, Equatable, Hashable {
     internal static let extJSONTypeWrapperKeys: [String] = ["$timestamp"]
     internal static var bsonType: BSONType { .timestamp }
-    internal var bson: BSON { .timestamp(self) }
+    internal func toBSON() -> BSON { .timestamp(self) }
 
     /// A timestamp representing seconds since the Unix epoch.
     public let timestamp: UInt32

@@ -527,7 +527,7 @@ extension BSONDecimal128: BSONValue {
 
     internal static var bsonType: BSONType { .decimal128 }
 
-    internal var bson: BSON { .decimal128(self) }
+    internal func toBSON() -> BSON { .decimal128(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard

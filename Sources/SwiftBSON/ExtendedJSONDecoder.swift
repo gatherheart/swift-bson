@@ -129,12 +129,6 @@ public class ExtendedJSONDecoder {
         try storage.buildDocument { storage in
             var bytes = 0
             for (k, v) in object {
-                guard k.isValidCString else {
-                    throw DecodingError._extendedJSONError(
-                        keyPath: keyPath,
-                        debugDescription: "Extended JSON keys cannot contain embedded null bytes - found \"\(k)\""
-                    )
-                }
                 bytes += try self.appendElement(v, to: &storage, forKey: k, keyPath: keyPath + [k])
             }
             return bytes
@@ -151,10 +145,10 @@ public class ExtendedJSONDecoder {
     ) throws -> Int {
         switch try self.decodeScalar(value, keyPath: keyPath) {
         case let .scalar(s):
-            return storage.append(key: key, value: s)
+            return try storage.append(key: key, value: s)
         case let .encodedArray(arr):
             var bytes = 0
-            bytes += storage.appendElementHeader(key: key, bsonType: .array)
+            bytes += try storage.appendElementHeader(key: key, bsonType: .array)
             bytes += try storage.buildDocument { storage in
                 var bytes = 0
                 for (i, v) in arr.enumerated() {
@@ -165,7 +159,7 @@ public class ExtendedJSONDecoder {
             return bytes
         case let .encodedObject(obj):
             var bytes = 0
-            bytes += storage.appendElementHeader(key: key, bsonType: .document)
+            bytes += try storage.appendElementHeader(key: key, bsonType: .document)
             bytes += try self.appendObject(obj, to: &storage, keyPath: keyPath)
             return bytes
         }
@@ -200,7 +194,7 @@ public class ExtendedJSONDecoder {
                     guard let bsonValue = try bsonType.init(fromExtJSON: JSON(json), keyPath: keyPath) else {
                         continue
                     }
-                    return .scalar(bsonValue.bson)
+                    return .scalar(try bsonValue.toBSON())
                 }
             }
 

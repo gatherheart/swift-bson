@@ -96,7 +96,7 @@ extension Date: BSONValue {
 
     internal static var bsonType: BSONType { .datetime }
 
-    internal var bson: BSON { .datetime(self) }
+    internal func toBSON() -> BSON { .datetime(self) }
 
     /// The number of milliseconds after the Unix epoch that this `Date` occurs.
     /// If the date is further in the future than Int64.max milliseconds from the epoch,

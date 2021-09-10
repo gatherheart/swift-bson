@@ -313,7 +313,7 @@ extension BSONBinary: BSONValue {
 
     internal static var bsonType: BSONType { .binary }
 
-    internal var bson: BSON { .binary(self) }
+    internal func toBSON() -> BSON { .binary(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let byteLength = buffer.readInteger(endianness: .little, as: Int32.self), byteLength >= 0 else {

@@ -536,10 +536,10 @@ final class DocumentTests: BSONTestCase {
         expect(doc1[str]).to(equal("second"))
 
         let abt = try CodecTests.AllBSONTypes.factory()
-        Mirror(reflecting: abt).children.forEach { child in
+        try Mirror(reflecting: abt).children.forEach { child in
             let value = child.value as! BSONValue
-            doc[str] = value.bson
-            expect(doc[str]).to(equal(value.bson))
+            doc[str] = try value.toBSON()
+            expect(doc[str]).to(equal(try value.toBSON()))
         }
     }
 

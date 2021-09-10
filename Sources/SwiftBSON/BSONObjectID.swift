@@ -114,7 +114,7 @@ extension BSONObjectID: BSONValue {
 
     internal static var bsonType: BSONType { .objectID }
 
-    internal var bson: BSON { .objectID(self) }
+    internal func toBSON() -> BSON { .objectID(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let bytes = buffer.readBytes(length: BSONObjectID.LENGTH) else {

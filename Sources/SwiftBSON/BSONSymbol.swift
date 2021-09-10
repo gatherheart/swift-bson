@@ -45,7 +45,7 @@ public struct BSONSymbol: BSONValue, CustomStringConvertible, Equatable, Hashabl
 
     internal static var bsonType: BSONType { .symbol }
 
-    internal var bson: BSON { .symbol(self) }
+    internal func toBSON() -> BSON { .symbol(self) }
 
     public var description: String { self.stringValue }
 

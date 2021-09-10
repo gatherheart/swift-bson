@@ -85,7 +85,7 @@ extension BSONCode: BSONValue {
 
     internal static var bsonType: BSONType { .code }
 
-    internal var bson: BSON { .code(self) }
+    internal func toBSON() -> BSON { .code(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let code = try String.read(from: &buffer).stringValue else {
@@ -154,7 +154,7 @@ extension BSONCodeWithScope: BSONValue {
 
     internal static var bsonType: BSONType { .codeWithScope }
 
-    internal var bson: BSON { .codeWithScope(self) }
+    internal func toBSON() -> BSON { .codeWithScope(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         let reader = buffer.readerIndex

@@ -561,7 +561,7 @@ open class ExtendedJSONConversionTestCase: BSONTestCase {
                 XCTFail("should have failed to parse \(json) but got \(doc) instead")
                 return
             }
-            expect(doc["val"]).to(sortedEqual(expected.bson))
+            expect(doc["val"]).to(sortedEqual(try expected.toBSON()))
         } catch {
             guard case .error = expectation else {
                 XCTFail("expected to get \(expectation) from \(json), failed with \(error) instead")

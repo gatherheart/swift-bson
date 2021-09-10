@@ -5,7 +5,7 @@ internal protocol BSONValue: Codable {
     static var bsonType: BSONType { get }
 
     /// A `BSON` corresponding to this `BSONValue`.
-    var bson: BSON { get }
+    func toBSON() throws -> BSON
 
     /// The `$`-prefixed keys that indicate an object is an extended JSON object wrapper
     /// for this `BSONValue`. (e.g. for Int32, this value is ["$numberInt"]).
@@ -22,7 +22,7 @@ internal protocol BSONValue: Codable {
     static func read(from buffer: inout ByteBuffer) throws -> BSON
 
     /// Writes this value's BSON byte representation to the provided ByteBuffer.
-    func write(to buffer: inout ByteBuffer)
+    func write(to buffer: inout ByteBuffer) throws
 
     /// Initializes a corresponding `BSONValue` from the provided extendedJSON.
     init?(fromExtJSON json: JSON, keyPath: [String]) throws

@@ -85,7 +85,7 @@ extension BSONDBPointer: BSONValue {
 
     internal static var bsonType: BSONType { .dbPointer }
 
-    internal var bson: BSON { .dbPointer(self) }
+    internal func toBSON() -> BSON { .dbPointer(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let ref = try String.read(from: &buffer).stringValue else {

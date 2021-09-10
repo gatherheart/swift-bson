@@ -36,7 +36,7 @@ extension Bool: BSONValue {
 
     internal static var bsonType: BSONType { .bool }
 
-    internal var bson: BSON { .bool(self) }
+    internal func toBSON() -> BSON { .bool(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let value = buffer.readInteger(as: UInt8.self) else {

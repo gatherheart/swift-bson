@@ -38,7 +38,7 @@ internal struct BSONNull: BSONValue, Equatable {
 
     internal static var bsonType: BSONType { .null }
 
-    internal var bson: BSON { .null }
+    internal func toBSON() -> BSON { .null }
 
     /// Initializes a new `BSONNull` instance.
     internal init() {}
@@ -96,7 +96,7 @@ internal struct BSONUndefined: BSONValue, Equatable {
 
     internal static var bsonType: BSONType { .undefined }
 
-    internal var bson: BSON { .undefined }
+    internal func toBSON() -> BSON { .undefined }
 
     /// Initializes a new `BSONUndefined` instance.
     internal init() {}
@@ -154,7 +154,7 @@ internal struct BSONMinKey: BSONValue, Equatable {
 
     internal static var bsonType: BSONType { .minKey }
 
-    internal var bson: BSON { .minKey }
+    internal func toBSON() -> BSON { .minKey }
 
     /// Initializes a new `MinKey` instance.
     internal init() {}
@@ -212,7 +212,7 @@ internal struct BSONMaxKey: BSONValue, Equatable {
 
     internal static var bsonType: BSONType { .maxKey }
 
-    internal var bson: BSON { .maxKey }
+    internal func toBSON() -> BSON { .maxKey }
 
     /// Initializes a new `MaxKey` instance.
     internal init() {}

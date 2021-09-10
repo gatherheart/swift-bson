@@ -79,7 +79,7 @@ extension Double: BSONValue {
 
     internal static var bsonType: BSONType { .double }
 
-    internal var bson: BSON { .double(self) }
+    internal func toBSON() -> BSON { .double(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let data = buffer.readBytes(length: 8) else {

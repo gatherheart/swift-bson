@@ -127,7 +127,8 @@ final class BSONCorpusTests: BSONTestCase {
 
         let decoder = ExtendedJSONDecoder()
 
-        for (_, testFile) in try retrieveSpecTestFiles(specName: "bson-corpus", asType: BSONCorpusTestFile.self) {
+        for (fileName, testFile) in try retrieveSpecTestFiles(specName: "bson-corpus", asType: BSONCorpusTestFile.self) {
+            print(fileName)
             if let validityTests = testFile.valid {
                 for test in validityTests {
                     guard !shouldSkip(testFile.description, test.description) else {
@@ -290,5 +291,30 @@ final class BSONCorpusTests: BSONTestCase {
                 }
             }
         }
+    }
+
+    /// Tests from the "Prose Tests" section of the test plan.
+    func testBSONCorpusProse() throws {
+        // 1. Prohibit null bytes in null-terminated strings when encoding BSON
+        // Note we can't write these tests using the dictionary literal syntax since all of these cases trigger
+        // fatalErrors with that API.
+
+        // a) Field name within a root document
+
+        // creating a new document
+        expect(try BSONDocument(keyValuePairs: [("a\0", 1)]))
+            .to(throwError(errorType: BSONError.InvalidArgumentError.self))
+
+        // adding to an existing document
+        var doc = ["b": 1]
+        // should crash
+        doc["a\0"] = 2
+        print(doc)
+
+        // Field name within a sub-document
+
+        // Pattern for a regular expression
+
+        // Flags/options for a regular expression
     }
 }

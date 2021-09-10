@@ -152,7 +152,7 @@ extension BSONRegularExpression: BSONValue {
 
     internal static var bsonType: BSONType { .regex }
 
-    internal var bson: BSON { .regex(self) }
+    internal func toBSON() -> BSON { .regex(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         let regex = try buffer.readCString()
@@ -160,8 +160,8 @@ extension BSONRegularExpression: BSONValue {
         return .regex(BSONRegularExpression(pattern: regex, options: flags))
     }
 
-    internal func write(to buffer: inout ByteBuffer) {
-        buffer.writeCString(self.pattern)
-        buffer.writeCString(self.options)
+    internal func write(to buffer: inout ByteBuffer) throws {
+        try buffer.writeCString(self.pattern)
+        try buffer.writeCString(self.options)
     }
 }

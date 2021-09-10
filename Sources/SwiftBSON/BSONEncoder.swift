@@ -218,7 +218,7 @@ public class BSONEncoder {
                     )
                 )
             }
-            return boxedValue.bson
+            return try boxedValue.toBSON()
         } catch let error as BSONErrorProtocol {
             throw EncodingError.invalidValue(
                 value,
@@ -524,7 +524,7 @@ extension _BSONEncoder {
         if let bsonValue = value as? BSONValue {
             return bsonValue
         } else if let bsonArray = value as? [BSONValue] {
-            return bsonArray.map { $0.bson }
+            return try bsonArray.map { try $0.toBSON() }
         }
 
         // The value should request a container from the _BSONEncoder.
@@ -767,8 +767,8 @@ private class MutableArray: BSONValue {
     fileprivate static var bsonType: BSONType { .array }
     internal static let extJSONTypeWrapperKeys: [String] = []
 
-    fileprivate var bson: BSON {
-        .array(self.array.map { $0.bson })
+    fileprivate func toBSON() throws -> BSON {
+        .array(try self.array.map { try $0.toBSON() })
     }
 
     fileprivate var array = [BSONValue]()
@@ -823,8 +823,8 @@ private class MutableDictionary: BSONValue {
     internal static let extJSONTypeWrapperKeys: [String] = []
     fileprivate static var bsonType: BSONType { .document }
 
-    fileprivate var bson: BSON {
-        .document(self.toDocument())
+    fileprivate func toBSON() throws -> BSON {
+        .document(try self.toDocument())
     }
 
     // rather than using a dictionary, do this so we preserve key orders
@@ -859,11 +859,11 @@ private class MutableDictionary: BSONValue {
     }
 
     /// Converts self to a `BSONDocument` with equivalent key-value pairs.
-    fileprivate func toDocument() -> BSONDocument {
+    fileprivate func toDocument() throws -> BSONDocument {
         var doc = BSONDocument()
         for i in 0..<self.keys.count {
             let value = self.values[i]
-            doc.append(key: self.keys[i], value: value.bson)
+            try doc.append(key: self.keys[i], value: try value.toBSON())
         }
         return doc
     }

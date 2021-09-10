@@ -35,7 +35,7 @@ extension String: BSONValue {
 
     internal static var bsonType: BSONType { .string }
 
-    internal var bson: BSON { .string(self) }
+    internal func toBSON() -> BSON { .string(self) }
 
     internal static func read(from buffer: inout ByteBuffer) throws -> BSON {
         guard let length = buffer.readInteger(endianness: .little, as: Int32.self) else {

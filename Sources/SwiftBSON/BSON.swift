@@ -95,11 +95,11 @@ public enum BSON {
     internal init(fromExtJSON json: JSON, keyPath: [String]) throws {
         // Spec requires that we try int32, try int64, then try double for decoding numbers
         if let int32 = try Int32(fromExtJSON: json, keyPath: keyPath) {
-            self = int32.bson
+            self = int32.toBSON()
             return
         }
         if let int64 = try Int64(fromExtJSON: json, keyPath: keyPath) {
-            self = int64.bson
+            self = int64.toBSON()
             return
         }
         for bsonType in BSON.allBSONTypes.values {
@@ -107,7 +107,7 @@ public enum BSON {
                 continue
             }
             if let value = try bsonType.init(fromExtJSON: json, keyPath: keyPath) {
-                self = value.bson
+                self = try value.toBSON()
                 return
             }
         }
@@ -115,7 +115,7 @@ public enum BSON {
         guard let doc = try BSONDocument(fromExtJSON: json, keyPath: keyPath) else {
             throw BSONError.InternalError(message: "Could not parse BSON from \(json)")
         }
-        self = doc.bson
+        self = doc.toBSON()
     }
 
     /// Converts this `BSON` to a corresponding `JSON` in relaxed extendedJSON format.
@@ -479,7 +479,7 @@ extension BSON: Codable {
             // This path is taken no matter what when a non-BSONDecoder is used.
             for bsonType in BSON.allBSONTypes.values {
                 if let value = try? bsonType.init(from: decoder) {
-                    self = value.bson
+                    self = try value.toBSON()
                 }
             }
 
